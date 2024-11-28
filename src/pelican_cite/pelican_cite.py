@@ -165,18 +165,18 @@ def process_content(article):
 
     # Get the data for the required citations and append to content
     labels = {}
-    content += bibliography_start
+    content += bibliography_start + "<ul>"
     for formatted_entry in formatted_entries:
         key = formatted_entry.key
         ref_id = key.replace(' ', '')
-        label = ("<a href='#" + ref_id + "' id='ref-" + ref_id + "-{0}'>"
-                 + formatted_entry.label + "</a>")
+        label = ("<cite><a href='#" + ref_id + "' id='ref-" + ref_id + "-{0}'>"
+                 + formatted_entry.label + "</a></cite>")
         t = formatted_entry.text.render(backend)
         t = t.replace('\\{', '&#123;')
         t = t.replace('\\}', '&#125;')
         t = t.replace('{', '')
         t = t.replace('}', '')
-        text = ("<p id='" + ref_id + "'>" + t)
+        text = ("<li><p id='" + ref_id + "'>" + t)
         for i in range(cite_count[key]):
             if i == 0:
                 text += ' ' + JUMP_BACK.format(ref_id, 1, '↩')
@@ -184,11 +184,11 @@ def process_content(article):
                     text += JUMP_BACK.format(ref_id, 1, ' <sup>1</sup> ')
             else:
                 text += JUMP_BACK.format(ref_id, i + 1, '<sup>' + str(i + 1) + '</sup> ')
-        text += '</p>'
-        content += text + '\n'
+        text += '</p></li>'
+        content += text
         labels[key] = label
 
-    content += bibliography_end
+    content += bibliography_end + "</ul>"
 
     # Replace citations in article/page
     cite_count = {}
